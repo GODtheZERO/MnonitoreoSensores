@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoreo de Sensores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-image: url('FONDO.jpg'); /* Reemplaza 'tu_fondo.bmp' con la ruta correcta de tu imagen BMP */
+            background-size: cover; /* Ajusta la propiedad 'cover' según tus preferencias */
+            background-repeat: no-repeat; /* Ajusta según tus preferencias */
+            background-attachment: fixed; /* Ajusta según tus preferencias */
+            color: #070101;
+        }
+
+        h1 {
+            color: #070101;
+        }
+
+        .sensor-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .sensor {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold
+        }
+
+        .led {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 10px;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.5s ease;
+        }
+
+        .led.green {
+            background-color: #4CAF50; /* Verde */
+            box-shadow: 0 0 20px #4CAF50;
+        }
+
+        .led.red {
+            background-color: #FF0000; /* Rojo */
+            box-shadow: 0 0 20px #FF0000;
+        }
+
+        #estadoFirebase {
+            margin-top: 70px;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.5; /* Ajusta el valor según tus preferencias; 1.5 significa 1.5 veces el tamaño de la fuente */
+        }
+
+        .text-focus-in {
+            -webkit-animation: text-focus-in 1.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+                    animation: text-focus-in 1.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+        }
+
+        .gear-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px;
+        }
+
+#gear {
+    width: 200px; /* Ajusta el tamaño según lo necesites */
+    animation: spin 2s linear infinite;
+    opacity: 0.4; /* Ajusta la transparencia según lo necesites */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes text-focus-in {
+  0% {
+    -webkit-filter: blur(12px);
+            filter: blur(12px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-filter: blur(0px);
+            filter: blur(0px);
+    opacity: 1;
+  }
+}
+@keyframes text-focus-in {
+  0% {
+    -webkit-filter: blur(12px);
+            filter: blur(12px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-filter: blur(0px);
+            filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <h1>Estado de Sensores y Banda Transportadora</h1>
+
+    <div class="sensor-container">
+        <div class="sensor">
+            <div id="Sensor1" class="led"></div>
+            <p>Sensor 1</p>
+        </div>
+        <div class="sensor">
+            <div id="Sensor2" class="led"></div>
+            <p>Sensor 2</p>
+        </div>
+        <div class="sensor">
+            <div id="Sensor3" class="led"></div>
+            <p>Sensor 3</p>
+        </div>
+        <div class="sensor">
+            <div id="Sensor4" class="led"></div>
+            <p>Sensor 4</p>
+        </div>
+    </div>
+
+    <div id="estadoFirebase" class="text-focus-in"></div>
+
+    <div class="gear-container">
+    <img id="gear" src="engrane.png" alt="Engranaje">
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-database.js"></script>
+    <script>
+        // Configura tu proyecto de Firebase aquí
+        const firebaseConfig = {
+            apiKey: "AIzaSyANuqprtOgLCPbLbhd6aLUfMvLrY0U8izo",
+            authDomain: "prueba-2f66c.firebaseapp.com",
+            databaseURL: "https://prueba-2f66c-default-rtdb.firebaseio.com",
+            projectId: "prueba-2f66c",
+            storageBucket: "prueba-2f66c.appspot.com",
+            messagingSenderId: "135925968722",
+            appId: "1:135925968722:web:8c3ab2e3ddd840bc17548b",
+            measurementId: "G-QC1SCXVXC4"
+        };
+
+        // Inicializa Firebase
+        const firebaseApp = firebase.initializeApp(firebaseConfig);
+        const database = firebaseApp.database();
+
+        // Referencias a los nodos de los sensores
+        const sensor1Ref = database.ref('Monitor de Sensores/Sensor 1');
+        const sensor2Ref = database.ref('Monitor de Sensores/Sensor 2');
+        const sensor3Ref = database.ref('Monitor de Sensores/Sensor 3');
+        const sensor4Ref = database.ref('Monitor de Sensores/Sensor 4');
+        const bandaRef = database.ref('Monitor de Sensores/Estado de Banda');
+        const empleadoRef = database.ref('Sesiones/Estado de sesion Empleado');
+        const mnttoRef = database.ref('Sesiones/Estado de sesion Mantenimiento');
+
+        // Función para actualizar el estado del LED
+
+        // Escucha los cambios en Firebase y actualiza la interfaz
+        sensor1Ref.on('value', function(snapshot) {
+            actualizarEstado(snapshot.val(), 'Sensor1');
+        });
+
+        sensor2Ref.on('value', function(snapshot) {
+            actualizarEstado(snapshot.val(), 'Sensor2');
+        });
+
+        sensor3Ref.on('value', function(snapshot) {
+            actualizarEstado(snapshot.val(), 'Sensor3');
+        });
+
+        sensor4Ref.on('value', function(snapshot) {
+            actualizarEstado(snapshot.val(), 'Sensor4');
+        });
+
+        bandaRef.on('value', function(snapshot) {
+            actualizarBanda(snapshot.val(), 'Estado de Banda');
+        });
+
+        empleadoRef.on('value', function(snapshotEmpleado) {
+            mnttoRef.on('value', function(snapshotMantenimiento) {
+                actualizarSesion(snapshotEmpleado.val(), snapshotMantenimiento.val());
+            });
+        });
+
+        function actualizarEstado(estado, sensorId) {
+            const elemento = document.getElementById(sensorId);
+            console.log('Valor de estado:', estado);
+
+            if (estado === 'OK') {
+                elemento.classList.remove('red');
+                elemento.classList.add('green');
+            } else if (estado === 'Error') {
+                elemento.classList.remove('green');
+                elemento.classList.add('red');
+            }
+
+        }
+
+        function actualizarBanda(estado_Banda) {
+            const engranaje = document.getElementById('gear');
+            console.log('Valor de estado_Banda:', estado_Banda);
+
+            if (estado_Banda === 'Banda activa') {
+                engranaje.style.animationPlayState = 'running';
+            } else if (estado_Banda === 'Banda inactiva') {
+                engranaje.style.animationPlayState = 'paused';
+            }
+        }
+
+        function actualizarSesion(estadoEmpleado, estadoMantenimiento) {
+            const elemento = document.getElementById('estadoFirebase');
+            console.log('Valor de estado Empleado:', estadoEmpleado);
+            console.log('Valor de estado Mantenimiento:', estadoMantenimiento);
+
+            let mensaje = '';
+
+            if (estadoEmpleado === 'Activa') {
+                mensaje += "Estado de sesión de Empleado: Activa";
+            } else if (estadoEmpleado === 'Inactiva') {
+                mensaje += "Estado de sesión de Empleado: Inactiva";
+            }
+
+            if (estadoMantenimiento === 'Activa') {
+                if (mensaje !== '') {
+                    mensaje += "<br>"; // Agrega un salto de línea si ya hay un mensaje
+                }
+                mensaje += "Estado de sesión de Mantenimiento: Activa";
+            } else if (estadoMantenimiento === 'Inactiva') {
+                if (mensaje !== '') {
+                    mensaje += "<br>"; // Agrega un salto de línea si ya hay un mensaje
+                }
+                mensaje += "Estado de sesión de Mantenimiento: Inactiva";
+            }
+
+            elemento.innerHTML = mensaje;
+        }
+
+
+    </script>
+</body>
+</html>
