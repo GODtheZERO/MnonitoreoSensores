@@ -53,10 +53,10 @@
         }
 
         #estadoFirebase {
-            margin-top: 70px;
+            margin-top: 30px;
             font-size: 18px;
             font-weight: bold;
-            line-height: 1.5; /* Ajusta el valor según tus preferencias; 1.5 significa 1.5 veces el tamaño de la fuente */
+            line-height: 1.5; 
         }
 
         .text-focus-in {
@@ -227,21 +227,21 @@
             let mensaje = '';
 
             if (estadoEmpleado === 'Activa') {
-                mensaje += "Estado de sesión de Empleado: Activa";
+                mensaje += "Sesión de Empleado: Activa";
             } else if (estadoEmpleado === 'Inactiva') {
-                mensaje += "Estado de sesión de Empleado: Inactiva";
+                mensaje += "Sesión de Empleado: Inactiva";
             }
 
             if (estadoMantenimiento === 'Activa') {
                 if (mensaje !== '') {
                     mensaje += "<br>"; // Agrega un salto de línea si ya hay un mensaje
                 }
-                mensaje += "Estado de sesión de Mantenimiento: Activa";
+                mensaje += "Sesión de Mantenimiento: Activa";
             } else if (estadoMantenimiento === 'Inactiva') {
                 if (mensaje !== '') {
                     mensaje += "<br>"; // Agrega un salto de línea si ya hay un mensaje
                 }
-                mensaje += "Estado de sesión de Mantenimiento: Inactiva";
+                mensaje += "Sesión de Mantenimiento: Inactiva";
             }
 
             elemento.innerHTML = mensaje;
