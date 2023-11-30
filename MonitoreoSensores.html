@@ -56,7 +56,7 @@
             margin-top: 30px;
             font-size: 18px;
             font-weight: bold;
-            line-height: 1.5; 
+            line-height: 1.5; /* Ajusta el valor según tus preferencias; 1.5 significa 1.5 veces el tamaño de la fuente */
         }
 
         .text-focus-in {
@@ -227,21 +227,21 @@
             let mensaje = '';
 
             if (estadoEmpleado === 'Activa') {
-                mensaje += "Sesión de Empleado: Activa";
+                mensaje += "Sesión Empleado: Activa";
             } else if (estadoEmpleado === 'Inactiva') {
-                mensaje += "Sesión de Empleado: Inactiva";
+                mensaje += "Sesión Empleado: Inactiva";
             }
 
             if (estadoMantenimiento === 'Activa') {
                 if (mensaje !== '') {
                     mensaje += "<br>"; // Agrega un salto de línea si ya hay un mensaje
                 }
-                mensaje += "Sesión de Mantenimiento: Activa";
+                mensaje += "Sesión Mantenimiento: Activa";
             } else if (estadoMantenimiento === 'Inactiva') {
                 if (mensaje !== '') {
                     mensaje += "<br>"; // Agrega un salto de línea si ya hay un mensaje
                 }
-                mensaje += "Sesión de Mantenimiento: Inactiva";
+                mensaje += "Sesión Mantenimiento: Inactiva";
             }
 
             elemento.innerHTML = mensaje;
